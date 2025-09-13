@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+[ -f "${repo_root}/.githooks.env" ] && source "${repo_root}/.githooks.env"
+
+# 直近のコミットで変更された対象ファイルを抽出
+mapfile -t changed < <(git diff-tree --no-commit-id --name-only -r HEAD -- .vimrc init.vim)
+
+if [ "${#changed[@]}" -gt 0 ]; then
+  echo "=== Deploying updated Vim configs ==="
+  "${repo_root}/scripts/deploy_vim.sh" "${changed[@]}"
+fi
+
