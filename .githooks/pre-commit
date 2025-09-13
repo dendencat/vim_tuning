@@ -3,40 +3,26 @@ set -euo pipefail
 
 repo_root="$(git rev-parse --show-toplevel)"
 [ -f "${repo_root}/.githooks.env" ] && source "${repo_root}/.githooks.env"
-# 安全デフォルト(収まると自動終了 -F、画面をクリアしない -X、色を通す -R)
-PAGER_CMD=${PAGER_CMD:-"less -FRX"}
 
 targets=( ".vimrc" "init.vim" )
 changed=()
 
 for t in "${targets[@]}"; do
-  if ! git diff --cached --quiet -- "${t}" 2>/dev/null; then
-    changed+=("${t}")
+  if ! git diff --cached --quiet -- "$t" 2>/dev/null; then
+    changed+=("$t")
   fi
 done
 
 if [ "${#changed[@]}" -gt 0 ]; then
   echo "=== Staged diff for Vim configs ==="
-  # SIGPIPE(141)でフック全体が落ちないように || を付ける
-  git -c color.ui=always diff --cached -- "${changed[@]}" | eval "$PAGER_CMD" || true
-  
-  # 対話入力は/dev/ttyから。GUI/CI環境でもブロックしない
-  if [ -t 0 ]; then
-    # 端末から呼ばれている(念のため/dev/ttyも用意)
-    read -r -p "Proceed with commit & deploy? [y/N]" ans < /dev/tty || ans=""
-  else
-    # 非TTY(IDE/CI)の場合は安全側で中止するか、環境変数で自動承認
-    if [ "${CI:-}" = "true" ] || [ "${AUTO_APPROVE_DIFF:-}" = "1" ]; then
-      ans="y"
-    else
-     echo "No TTY for confirmation. Set AUTO_APPROVE_DIFF=1 or press y in TTY."
-     ans=""
-    fi
-  fi
+  # less を使わず cat 相当で一気に出力
+  git -c color.ui=always diff --cached -- "${changed[@]}"
 
-  case "${ans}" in
-    y|Y) ;;
+  # 入力は必ず /dev/tty から受け取る
+  read -r -p "Proceed with commit & deploy? [y/N] " ans < /dev/tty || ans=""
+
+  case "$ans" in
+    y|Y) ;;  # 承認
     *) echo "Abort commit."; exit 1;;
   esac
 fi
-
