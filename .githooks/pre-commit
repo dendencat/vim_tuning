@@ -4,7 +4,7 @@ set -euo pipefail
 repo_root="$(git rev-parse --show-toplevel)"
 [ -f "${repo_root}/.githooks.env" ] && source "${repo_root}/.githooks.env"
 
-targets=( ".vimrc" "init.vim" )
+targets=( ".vimrc" "init.vim" "vimrc_core.vim" )
 changed=()
 
 for t in "${targets[@]}"; do

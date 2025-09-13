@@ -2,6 +2,11 @@
 set -euo pipefail
 
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+vimrc_path="${repo_root}"/.vimrc
+vimrc_core_path="${repo_root}"/.vim/vimrc_core.vim
+init_vim_path="${repo_root}"/.config/nvim/.vimrc
+
+
 [ -f "${repo_root}/.githooks.env" ] && source "${repo_root}/.githooks.env"
 
 timestamp="$(date +%Y%m%d-%H%M%S)"
@@ -30,10 +35,13 @@ changed_list=("$@")  # ここにはコミットで変わった対象ファイル
 for f in "${changed_list[@]}"; do
   case "${f}" in
     .vimrc)
-      deploy_one "${repo_root}/.vimrc" "${DEPLOY_VIMRC}"
+      deploy_one "${vimrc_path}" "${DEPLOY_VIMRC}"
+      ;;
+    vimrc_core.vim)
+      deploy_one "${vimrc_core_path}" "${DEPLOY_VIMRC_CORE}"
       ;;
     init.vim)
-      deploy_one "${repo_root}/init.vim" "${DEPLOY_INITVIM}"
+      deploy_one "${init_vim_path}" "${DEPLOY_INITVIM}"
       ;;
     *)
       # 対象外はスキップ
