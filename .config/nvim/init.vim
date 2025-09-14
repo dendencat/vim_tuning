@@ -37,7 +37,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 " プラグイン一覧
 Plug 'junegunn/fzf'
 Plug 'scrooloose/nerdtree'
-Plug 'prabirshrestha/vim-slp'
+Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
