@@ -3,9 +3,9 @@ set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
 
 " Vimのコア設定を流用
-if filereadable(expand('~/.vim/vimrc_core.vim'))
-  execute 'source' fnamescape('~/.vim/vimrc_core.vim')
-endif
+"if filereadable(expand('~/.vim/vimrc_core.vim'))
+"  execute 'source' fnamescape('~/.vim/vimrc_core.vim')
+"endif
 
 if has('nvim')
   set termguicolors
